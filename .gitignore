@@ -1,0 +1,9 @@
+
+test
+__pycache__
+venv/
+
+
+# secrets
+credentials.json
+token.json
