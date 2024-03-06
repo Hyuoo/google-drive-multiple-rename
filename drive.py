@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import os
 
+# 요청 할 API 사용 범위
 SCOPES = [
     # "https://www.googleapis.com/auth/drive",
     # "https://www.googleapis.com/auth/drive.file",
@@ -14,6 +15,7 @@ SCOPES = [
     # "https://www.googleapis.com/auth/drive.readonly",
 ]
 
+# 적당히 필요한 mime type을 alias로써 넣어주기.
 MIME_TYPE = {
     "mp4": "video/mp4",
     "folder": "application/vnd.google-apps.folder",
@@ -52,10 +54,13 @@ class Drive:
         """
         :param repeat: 0=infinite, count
         """
+        # 검색 쿼리 생성
         q_fields = []
         if file_type and file_type in MIME_TYPE:
+            # mineType이 일치하는 파일
             q_fields.append(f"mimeType='{MIME_TYPE.get(file_type)}'")
         if startswith:
+            # startswith로 시작하는 파일
             q_fields.append(f"name contains '{startswith}'")
 
         files = []
@@ -67,7 +72,7 @@ class Drive:
                 .list(
                     q=" and ".join(q_fields),
                     pageSize=page_size,
-                    fields="nextPageToken, files(id, name)",  #, mimeType)",
+                    fields="nextPageToken, files(id, name)",  #, mimeType)",  # mimeType을 사용해서 검색해서 제외 함.
                     pageToken=page_token
                     ).execute()
                 )
@@ -97,10 +102,8 @@ class Drive:
             .update(
                 fileId=file_id,
                 body={"name": new_name},
-                # permission ={'role': 'writer'}
             ).execute()
         )
-        
 
         return result
     
