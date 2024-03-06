@@ -19,7 +19,12 @@ from drive import Drive
 import re
 
 drive = Drive()
-files = drive.get_file_list(file_type="text", startswith="is_empty", page_size=20, repeat=1)
+files = drive.get_file_list(
+    file_type="text",
+    startswith="test_file_",
+    page_size=20,
+    repeat=1
+    )
 
 for f in files:
     fid = f["id"]
