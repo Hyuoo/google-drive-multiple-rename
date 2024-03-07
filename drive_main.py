@@ -4,7 +4,7 @@ from drive import Drive
 drive = Drive()
 
 files = drive.get_file_list(
-    file_type="text",
+    mime_type="text",
     contains="Bam",
     page_size=20,
     repeat=1
