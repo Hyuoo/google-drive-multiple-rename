@@ -50,7 +50,7 @@ class Drive:
         
         return service
 
-    def get_file_list(self, *, page_size=20, repeat=0, file_type=None, startswith=None):
+    def get_file_list(self, *, page_size=20, repeat=0, file_type=None, contains=None):
         """
         :param repeat: 0=infinite, count
         """
@@ -59,9 +59,14 @@ class Drive:
         if file_type and file_type in MIME_TYPE:
             # mineType이 일치하는 파일
             q_fields.append(f"mimeType='{MIME_TYPE.get(file_type)}'")
-        if startswith:
-            # startswith로 시작하는 파일
-            q_fields.append(f"name contains '{startswith}'")
+        if contains:
+            if contains[0] == "^":
+                # ^으로 시작하면 포함되지 않은 파일.
+                q_fields.append(f"not name contains '{contains[1:]}'")
+            else:
+                # contains가 포함 된 파일
+                q_fields.append(f"name contains '{contains}'")
+            
 
         files = []
         count = 0
@@ -72,7 +77,7 @@ class Drive:
                 .list(
                     q=" and ".join(q_fields),
                     pageSize=page_size,
-                    fields="nextPageToken, files(id, name)",  #, mimeType)",  # mimeType을 사용해서 검색해서 제외 함.
+                    fields="nextPageToken, files(id, name, mimeType)",
                     pageToken=page_token
                     ).execute()
                 )
