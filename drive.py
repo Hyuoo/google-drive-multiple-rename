@@ -22,7 +22,19 @@ MIME_TYPE = {
     "dir": "application/vnd.google-apps.folder",
     "text": "text/plain",
     "txt": "text/plain",
+    "md": "text/markdown",
+    "markdown": "text/markdown",
+    "pdf": "application/pdf",
+    "py": "text/x-python",
+    "python": "text/x-python",
     "file": "application/vnd.google-apps.file",
+    "sheet": "application/vnd.google-apps.spreadsheet",
+    "gsheet": "application/vnd.google-apps.spreadsheet",
+    "spreadsheet": "application/vnd.google-apps.spreadsheet",
+    "csv": "text/csv",
+    "json": "application/json",
+    "zip": "application/x-zip-compressed",
+    "png": "image/png"
 }
 
 class Drive:
@@ -50,32 +62,53 @@ class Drive:
         
         return service
 
-    def get_file_list(self, *, page_size=20, repeat=0, file_type=None, contains=None):
+    def get_file_list(self, *, page_size=20, repeat=0, mime_type=None, contains=None):
         """
         :param repeat: 0=infinite, count
         """
         # 검색 쿼리 생성
         q_fields = []
-        if file_type and file_type in MIME_TYPE:
-            # mineType이 일치하는 파일
-            q_fields.append(f"mimeType='{MIME_TYPE.get(file_type)}'")
-        if contains:
-            if contains[0] == "^":
+
+        # mimeType
+        if type(mime_type) not in [list, tuple]:
+            mime_type = [mime_type]
+        for ft in mime_type:
+            if ft[0] == "^":
+                # ^으로 시작하면 일치하지 않는 파일
+                operator = "!="
+                value = MIME_TYPE.get(ft[1:], "")
+            else:
+                operator = "="
+                value = MIME_TYPE.get(ft, "")
+            
+            if value:
+                q_fields.append(f"mimeType{operator}'{value}'")
+            else:
+                msg = f"unexpected type:{ft}"
+                raise ValueError(msg)
+        
+        # file name
+        if type(contains) not in [list, tuple]:
+            contains = [contains]
+        for ct in contains:
+            if ct[0] == "^":
                 # ^으로 시작하면 포함되지 않은 파일.
-                q_fields.append(f"not name contains '{contains[1:]}'")
+                q_fields.append(f"not name contains '{ct[1:]}'")
             else:
                 # contains가 포함 된 파일
-                q_fields.append(f"name contains '{contains}'")
+                q_fields.append(f"name contains '{ct}'")
             
 
         files = []
         count = 0
         page_token = None
+        q = " and ".join(q_fields)
+        print(f"query: \"{q}\"")
         while (repeat == 0 or count != repeat):
             results = (
                 self.service.files()
                 .list(
-                    q=" and ".join(q_fields),
+                    q=q,
                     pageSize=page_size,
                     fields="nextPageToken, files(id, name, mimeType)",
                     pageToken=page_token
