@@ -23,8 +23,7 @@ pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-
 API 및 서비스 > [[OAuth 동의 화면 구성]](https://console.cloud.google.com/apis/credentials/consent?hl=ko) 에서 외부 사용자로 생성한다.
 - **범위**에서 Drive 범위를 추가한다.
 - 파일 조회하고 이름변경 하려는 기능(`list`, `update`)은 `/auth/drive.metadata`만 있으면 됨.
-
-테스트 사용자는 본인의 구글 계정으로 하면 된다.
+- 테스트 사용자는 본인의 구글 계정으로 하면 된다.
 
 #### 3. 사용자 인증 정보 생성
 
