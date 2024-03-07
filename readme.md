@@ -1,8 +1,10 @@
 # 구글 드라이브의 파일명을 일괄로 바꾸자.
 
-> [Google Drive API Docs](https://developers.google.com/drive/api/guides/about-sdk?hl=ko)
-> 
-> [Google Drive API Reference (v3)](https://developers.google.com/drive/api/reference/rest/v3?hl=ko)
+- [Google Drive API Docs](https://developers.google.com/drive/api/guides/about-sdk?hl=ko)
+- [Google Drive API Reference (v3)](https://developers.google.com/drive/api/reference/rest/v3?hl=ko)
+
+## 기능
+
 
 ## API Setup
 
